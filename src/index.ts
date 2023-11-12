@@ -1,0 +1,1 @@
+export { PluginOptions as Options } from "./types/plugin-options";
