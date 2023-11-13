@@ -13,7 +13,7 @@ import MedusaPluginSettingsService from "../services/medusa-plugin-settings";
 import { PLUGIN_NAME } from "../constants";
 import { PluginOptions } from "../types/plugin-options";
 
-export const settingsInitializerLoaderFunction = async (container: AwilixContainer, config: ConfigModule) => {
+export default async (container: AwilixContainer, config: ConfigModule) => {
     console.info("[medusa-plugin-settings](settings-initializer):", "started");
 
     const configuration = config.plugins

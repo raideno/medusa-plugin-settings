@@ -75,6 +75,10 @@ class SettingSchemaValidator {
     note?: string;
 
     @IsOptional()
+    @IsString()
+    group?: string;
+
+    @IsOptional()
     @IsBoolean()
     notification?: boolean;
 
@@ -113,7 +117,7 @@ class PluginOptionsValidator implements PluginOptions {
     shouldDeleteUnusedSettings?: boolean;
 }
 
-export const pluginConfigurationValidatorLoaderFunction = async (container: AwilixContainer, config: ConfigModule) => {
+export default async (container: AwilixContainer, config: ConfigModule) => {
     console.info("[medusa-plugin-settings](configuration-validator):", "started");
 
     const medusaPluginSettingsService: MedusaPluginSettingsService = container.resolve(

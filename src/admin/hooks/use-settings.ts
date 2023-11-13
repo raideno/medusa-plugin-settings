@@ -14,7 +14,7 @@ export default () =>
         getSettings.bind(null)
     );
 
-export const mutateSetting = (
+export const mutateSettings = (
     data: (
         oldData: useSettingsDataType
     ) => Promise<useSettingsDataType>,
