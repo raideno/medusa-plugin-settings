@@ -1,5 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm"
 
+import { DATABASE_SETTINGS_TABLE_NAME } from "../constants";
+
 export class MedusaPluginSettingCreate1699811476556 implements MigrationInterface {
 
     name = "MedusaPluginSettingCreate1699811476556"
@@ -7,7 +9,7 @@ export class MedusaPluginSettingCreate1699811476556 implements MigrationInterfac
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             `
-            CREATE TABLE "medusa_plugin_setting" 
+            CREATE TABLE IF NOT EXISTS "${DATABASE_SETTINGS_TABLE_NAME}" 
             (
                "id" character varying NOT NULL,
                "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -22,7 +24,7 @@ export class MedusaPluginSettingCreate1699811476556 implements MigrationInterfac
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TABLE "medusa_plugin_setting"`);
+        await queryRunner.query(`DROP TABLE "${DATABASE_SETTINGS_TABLE_NAME}"`);
     }
 
 }

@@ -1,31 +1,33 @@
-import { Lifetime } from "awilix";
-
 import { TransactionBaseService } from "@medusajs/medusa";
 
-import MedusaPluginSetting from "../models/medusa-plugin-setting";
-import MedusaPluginSettingRepository from "../repository/medusa-plugin-setting"
+import { MedusaPluginSetting } from "../models/medusa-plugin-setting";
+
+import MedusaPluginSettingRepository from "../repositories/medusa-plugin-setting"
 
 import { PluginOptions } from "../types/plugin-options";
-import { SettingSchema, SettingSchemaOption, SettingSchemaOptions, SettingSchemaTypes } from "../types/setting-schema";
 import { ExtendedSetting } from "../types/extended-setting";
+import { SettingSchema, SettingSchemaOption, SettingSchemaOptions, SettingSchemaTypes } from "../types/setting-schema";
+import { EntityManager } from "typeorm";
+
+type InjectedDependencies = {
+    manager: EntityManager;
+    medusaPluginSettingRepository: typeof MedusaPluginSettingRepository;
+};
 
 export default class MedusaPluginSettingsService extends TransactionBaseService {
 
-    static LIFE_TIME = Lifetime.SCOPED;
-
-    protected readonly options_: PluginOptions;
-    protected readonly medusaPluginSettingRepository_: typeof MedusaPluginSettingRepository;
+    protected options_: PluginOptions;
+    protected medusaPluginSettingRepository_: typeof MedusaPluginSettingRepository;
 
     constructor(
         {
-            medusaPluginSettingRepository,
-        }: {
-            medusaPluginSettingRepository: typeof MedusaPluginSettingRepository;
-        },
+            manager,
+            medusaPluginSettingRepository
+        }: InjectedDependencies,
         options: PluginOptions,
     ) {
-        // @ts-ignore
-        super(...arguments);
+        super(arguments[0]);
+        // super(...arguments);
 
         this.options_ = options;
         this.medusaPluginSettingRepository_ = medusaPluginSettingRepository;
@@ -44,6 +46,13 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
      * resetDatabaseSettings
      */
 
+    getRepository() {
+        return this.activeManager_.withRepository(
+            this.medusaPluginSettingRepository_
+        );
+
+    }
+
     listSettingsSchemas(): SettingSchema[] {
         return this.options_.settings;
     }
@@ -60,10 +69,22 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
         }
     }
 
-    validateSettingValue(settingId: SettingSchema["id"], value: unknown): boolean {
+    validateSettingValue(settingId: SettingSchema["id"], unParsedValue: unknown): boolean {
         const settingSchema = this.retrieveSettingSchema(settingId);
+        let parsedValue: unknown
+
+        try {
+            parsedValue = JSON.parse(unParsedValue as any);
+        } catch (error) {
+            console.log("[medusa-plugin-settings](service-validateSettingValue):", "failed parsing.");
+            return false;
+        }
+
+        const value = parsedValue;
+
         switch (settingSchema.type) {
             case SettingSchemaTypes.BOOLEAN:
+                console.log("validating-boolean");
                 return typeof value === "boolean";
                 break;
             case SettingSchemaTypes.INTEGER:
@@ -89,6 +110,7 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
                 return Array.isArray(value) && value.every((v) => typeof v === "string")
                 break;
             default:
+                console.log("default-:");
                 return false;
                 break;
         }
@@ -107,7 +129,7 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
         } else {
             setting.value = settingSchema.defaultValue;
         }
-        const initializedSetting = await this.medusaPluginSettingRepository_.save(setting);
+        const initializedSetting = await this.getRepository().save(setting);
         return initializedSetting;
     }
 
@@ -123,12 +145,12 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
     }
 
     async listSettings(extended: boolean = false): Promise<MedusaPluginSetting[]> {
-        const settings = await this.medusaPluginSettingRepository_.find();
+        const settings = await this.getRepository().find();
         return settings;
     }
 
     async retrieveSetting(settingId: SettingSchema["id"], extended: boolean = false): Promise<MedusaPluginSetting | null> {
-        const setting = await this.medusaPluginSettingRepository_.findOneBy({ id: settingId });
+        const setting = await this.getRepository().findOneBy({ id: settingId });
         return setting;
     }
 
@@ -139,7 +161,7 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
         if (!validation)
             return false;
         setting.value = newSettingValue;
-        const updatedSetting = await this.medusaPluginSettingRepository_.save(setting);
+        const updatedSetting = await this.getRepository().save(setting);
         return updatedSetting;
     }
 
@@ -157,12 +179,12 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
         const settingSchema = this.retrieveSettingSchema(settingId);
         const setting = await this.retrieveSetting(settingId);
         setting.value = settingSchema.defaultValue;
-        const reseteddSetting = await this.medusaPluginSettingRepository_.save(setting);
+        const reseteddSetting = await this.getRepository().save(setting);
         return reseteddSetting;
     }
 
     async deleteDatabaseSetting(settingId: SettingSchema["id"]): Promise<boolean> {
-        const deleteResult = await this.medusaPluginSettingRepository_.delete({
+        const deleteResult = await this.getRepository().delete({
             id: settingId
         });
         return (deleteResult.affected || 1) === 1;

@@ -34,7 +34,8 @@
       "build": "cross-env npm run clean && npm run build:server && npm run build:admin",
       "build:server": "cross-env npm run clean && tsc -p tsconfig.json",
       "build:admin": "cross-env medusa-admin build",
-      "prepare": "cross-env NODE_ENV=production npm run build:server && medusa-admin bundle"
+      "prepare": "cross-env NODE_ENV=production npm run build:server && medusa-admin bundle",
+      "remove-medusa": "cross-env ./node_modules/.bin/rimraf ./node_modules/@medusajs/medusa"
     },
     "peerDependencies": {
       "@medusajs/icons": "^1.0.0",

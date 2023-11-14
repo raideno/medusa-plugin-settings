@@ -1,4 +1,4 @@
-import { useExtendedSettingPageContext } from "../../../contexts/extended-settings-page"
+import { useExtendedSettingPageContext } from "../contexts/extended-settings-page"
 import ExtendedSettingsPageSettingsListItem from "./extended-settings-page-settings-list-item";
 import ExtendedSettingsPageSettingsListItemSkeleton from "./extended-settings-page-settings-list-item-skeleton";
 

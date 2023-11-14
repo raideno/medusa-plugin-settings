@@ -1,4 +1,4 @@
-import { ExtendedSetting } from "../../../../types/extended-setting"
+import { ExtendedSetting } from "../../types/extended-setting"
 
 type ExtendedSettingsPageSettingsListItemProps = {
     setting: ExtendedSetting;

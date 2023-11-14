@@ -10,27 +10,23 @@ import { SettingSchema, SettingSchemaOption, SettingSchemaTypes } from "../types
 
 import { PLUGIN_NAME } from "../constants";
 
-import MedusaPluginSettingRepository from "../repository/medusa-plugin-setting";
+// @ValidatorConstraint({ name: 'isSettingSchemaDefaultValueValid', async: false })
+// export class IsSettingSchemaDefaultValueValid implements ValidatorConstraintInterface {
+//     validate(value: unknown, args: ValidationArguments) {
+//         const settingSchema = (args.object || {}) as SettingSchemaValidator;
 
-import MedusaPluginSettingsService from "../services/medusa-plugin-settings";
+//         const settingSchemaId = settingSchema.id;
 
-@ValidatorConstraint({ name: 'isSettingSchemaDefaultValueValid', async: false })
-export class IsSettingSchemaDefaultValueValid implements ValidatorConstraintInterface {
-    validate(value: unknown, args: ValidationArguments) {
-        const settingSchema = (args.object || {}) as SettingSchemaValidator;
+//         const medusaPluginSettingsService = new MedusaPluginSettingsService({
+//             medusaPluginSettingRepository: MedusaPluginSettingRepository
+//         }, {
+//             backendUrl: "",
+//             settings: [settingSchema as any],
+//         });
 
-        const settingSchemaId = settingSchema.id;
-
-        const medusaPluginSettingsService = new MedusaPluginSettingsService({
-            medusaPluginSettingRepository: MedusaPluginSettingRepository
-        }, {
-            backendUrl: "",
-            settings: [settingSchema as any],
-        });
-
-        return medusaPluginSettingsService.validateSettingValue(settingSchemaId, value);
-    }
-}
+//         return medusaPluginSettingsService.validateSettingValue(settingSchemaId, value);
+//     }
+// }
 
 class SettingSchemaOptionValidator implements SettingSchemaOption {
     @IsString()
@@ -53,7 +49,7 @@ class SettingSchemaValidator {
     @IsBoolean()
     confirmation?: boolean;
 
-    @Validate(IsSettingSchemaDefaultValueValid)
+    // @Validate(IsSettingSchemaDefaultValueValid)
     defaultValue: unknown;
 
     @IsOptional()
@@ -86,6 +82,7 @@ class SettingSchemaValidator {
     type: SettingSchemaTypes;
 
     @IsArray()
+    @IsOptional()
     @ValidateNested({ each: true })
     // @ArrayMinSize(0)
     // @ArrayMaxSize()
@@ -99,7 +96,7 @@ class PluginOptionsValidator implements PluginOptions {
 
     @IsOptional()
     @IsBoolean()
-    enableUi?: boolean;
+    enableUI?: boolean;
 
     @IsOptional()
     @IsBoolean()
@@ -117,31 +114,19 @@ class PluginOptionsValidator implements PluginOptions {
     shouldDeleteUnusedSettings?: boolean;
 }
 
-export default async (container: AwilixContainer, config: ConfigModule) => {
+export default async (container: AwilixContainer, configuration: PluginOptions) => {
     console.info("[medusa-plugin-settings](configuration-validator):", "started");
 
-    const medusaPluginSettingsService: MedusaPluginSettingsService = container.resolve(
-        "medusaPluginSettingsService"
-    );
+    // const medusaPluginSettingsService: MedusaPluginSettingsService = container.resolve(
+    //     "medusaPluginSettingsService"
+    // );
 
-    const configuration = config.plugins
-        .find((plugin) =>
-            typeof plugin === "object" &&
-            plugin.resolve === PLUGIN_NAME
-        );
 
-    if (typeof configuration !== "object") {
-        console.error("[medusa-plugin-settings](configuration-validator):", "no plugin configuration found.");
-        // exit()
-        return;
-    }
-
-    const options = configuration.options as PluginOptions;
-
-    const validation = await validate(plainToInstance(PluginOptionsValidator, options));
+    const validation = await validate(plainToInstance(PluginOptionsValidator, configuration));
 
     if (validation.length > 0) {
         console.error("[medusa-plugin-settings](configuration-validator):", "invalid plugin options provided.");
+        console.dir(validation, { depth: null });
         // exit()
         return;
     }

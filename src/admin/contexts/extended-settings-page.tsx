@@ -71,8 +71,8 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
         if (!isLoading) {
             setIsFetchLoading(false);
             if (!error) {
-                setSettings(data.settings);
-                setOldSettings(data.settings);
+                setSettings(data ? data.settings : undefined);
+                setOldSettings(data ? data.settings : undefined);
                 setIsFetchError(true);
             } else {
                 setSettings(undefined);

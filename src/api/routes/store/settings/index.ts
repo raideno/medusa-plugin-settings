@@ -19,7 +19,8 @@ import getSettings from "./get-settings";
 const router = Router();
 
 export default (storeRouter: Router) => {
-    storeRouter.use(PLUGIN_STORE_ROUTE_BASE_PATH, router);
+    // TODO: put it in a global variable
+    storeRouter.use("/extended-settings", router);
 
     router.get("/", wrapHandler(getSettings));
     router.get("/:settingId", wrapHandler(getSetting));

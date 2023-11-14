@@ -2,11 +2,12 @@ import { MedusaError } from "@medusajs/utils";
 
 import { Request, Response } from "express";
 
-import { AdminUpdateSettingsResponseBodyType as EndpointResponseBodyType } from "../../../../types/api/admin/update-settings-response-body-type";
 import { AdminUpdateSettingsRequestBodyType as EndpointRequestBodyType } from "../../../../types/api/admin/update-settings-request-body-type";
+import { AdminUpdateSettingsResponseBodyType as EndpointResponseBodyType } from "../../../../types/api/admin/update-settings-response-body-type";
+
+import { MedusaPluginSetting } from "../../../../models/medusa-plugin-setting";
 
 import MedusaPluginSettingsService from "../../../../services/medusa-plugin-settings";
-import MedusaPluginSetting from "../../../../models/medusa-plugin-setting";
 
 export default async (req: Request, res: Response): Promise<void> => {
     // TODO: in case one of the updates fail, rollback the update execution and throw an error

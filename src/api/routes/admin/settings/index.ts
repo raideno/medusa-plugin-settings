@@ -23,7 +23,8 @@ import updateSettings from "./update-settings";
 const router = Router();
 
 export default (adminRouter: Router) => {
-    adminRouter.use(PLUGIN_ADMIN_ROUTE_BASE_PATH, router);
+    // TODO: put it in a global variable
+    adminRouter.use("/extended-settings", router);
 
     router.get("/", wrapHandler(getSettings));
     router.get("/:settingId", wrapHandler(getSetting));
