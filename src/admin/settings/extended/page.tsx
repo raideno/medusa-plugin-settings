@@ -1,3 +1,5 @@
+"use client"
+
 import { Adjustments } from "@medusajs/icons"
 import type { SettingProps, SettingConfig } from "@medusajs/admin"
 

@@ -1,5 +1,7 @@
 import { ExtendedSetting } from "../../../types/extended-setting";
 import { SettingSchemaTypes } from "../../../types/setting-schema";
+import SettingFieldContainer from "./setting-field-container";
+import SettingFieldController from "./setting-field-controller";
 
 type SettingFieldProps = {
     // value: unknown;
@@ -18,36 +20,15 @@ const SettingField = ({
     onValueChange,
 }: SettingFieldProps) => {
 
-    switch (setting.type) {
-        case SettingSchemaTypes.BOOLEAN:
-            return (
-                <div>SettingField-BOOLEAN</div>
-            )
-            break;
-        case SettingSchemaTypes.INTEGER:
-            <div>SettingField-INTEGER</div>
-            break;
-        case SettingSchemaTypes.NUMBER:
-            <div>SettingField-NUMBER</div>
-            break;
-        case SettingSchemaTypes.PASSWORD:
-            <div>SettingField-PASSWORD</div>
-            break;
-        case SettingSchemaTypes.SELECT:
-            <div>SettingField-SELECT</div>
-            break;
-        case SettingSchemaTypes.STRING:
-            <div>SettingField-STRING</div>
-            break;
-        case SettingSchemaTypes.STRING_ARRAY:
-            <div>SettingField-STRING_ARRAY</div>
-            break;
-        case SettingSchemaTypes.TEXT:
-            <div>SettingField-TEXT</div>
-            break;
-        default:
-            break;
+    function handleValueChange(value: unknown) {
+        onValueChange(value);
     }
+
+    return (
+        <SettingFieldContainer setting={setting}>
+            <SettingFieldController setting={setting} onValueChange={handleValueChange} />
+        </SettingFieldContainer>
+    )
 }
 
 export default SettingField;

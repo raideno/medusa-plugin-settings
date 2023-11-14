@@ -6,7 +6,7 @@ export type PluginOptions = {
      * 
      * @prop {boolean} [enableUi=true]
      */
-    enableUi?: boolean;
+    enableUI?: boolean;
     /**
      * Your medusa backend URL.
      * 

@@ -15,7 +15,7 @@ export enum SettingSchemaTypes {
     TEXT = "TEXT",
     PASSWORD = "PASSWORD",
     SELECT = "SELECT",
-    STRING_ARRAY = "STRING_ARRAY",
+    // STRING_ARRAY = "STRING_ARRAY",
 }
 
 type SettingSchemaTypeToOptionType = {
@@ -27,7 +27,7 @@ type SettingSchemaTypeToOptionType = {
     [SettingSchemaTypes.PASSWORD]: undefined;
     // [SettingSchemaTypes.SELECT]: SettingSchemaOptions | (() => Promise<SettingSchemaOptions> | SettingSchemaOptions);
     [SettingSchemaTypes.SELECT]: SettingSchemaOptions;
-    [SettingSchemaTypes.STRING_ARRAY]: undefined;
+    // [SettingSchemaTypes.STRING_ARRAY]: undefined;
 }
 
 type SettingSchemaTypeToDefaultValueType = {
@@ -38,7 +38,7 @@ type SettingSchemaTypeToDefaultValueType = {
     [SettingSchemaTypes.TEXT]: string;
     [SettingSchemaTypes.PASSWORD]: string;
     [SettingSchemaTypes.SELECT]: string;
-    [SettingSchemaTypes.STRING_ARRAY]: [];
+    // [SettingSchemaTypes.STRING_ARRAY]: [];
 }
 
 type BaseSettingSchemaWithType<SettingSchemaType extends SettingSchemaTypes> = {
@@ -68,5 +68,5 @@ export type SettingSchema =
     SettingSchemaWithType<SettingSchemaTypes.STRING> |
     SettingSchemaWithType<SettingSchemaTypes.TEXT> |
     SettingSchemaWithType<SettingSchemaTypes.PASSWORD> |
-    SettingSchemaWithType<SettingSchemaTypes.SELECT> |
-    SettingSchemaWithType<SettingSchemaTypes.STRING_ARRAY>;
+    SettingSchemaWithType<SettingSchemaTypes.SELECT>;
+// SettingSchemaWithType<SettingSchemaTypes.STRING_ARRAY> |

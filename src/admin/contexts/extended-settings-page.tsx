@@ -28,11 +28,16 @@ type ExtendedSettingPageContextType = {
 
     resetSettingsToDefaultValues: () => Promise<void>;
 
+    isBeingResetedLoading: boolean;
+    isBeingResetedError: boolean;
+
     isSubmitLoading: boolean;
     isSubmitError: boolean;
 
     isDiscardLoading: boolean;
     isDiscardError: boolean;
+
+    loading: boolean;
 }
 
 const ExtendedSettingPageContext = createContext<ExtendedSettingPageContextType | null>(null);
@@ -60,12 +65,17 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
     const [isSubmitLoading, setIsSubmitLoading] = useState<boolean>(false);
     const [isSubmitError, setIsSubmitError] = useState<boolean>(false);
 
+    const [isBeingResetedLoading, setIsBeingResetedLoading] = useState<boolean>(false);
+    const [isBeingResetedError, setIsBeingResetedError] = useState<boolean>(false);
+
     const [isDiscardLoading, setIsDiscardLoading] = useState<boolean>(false);
     const [isDiscardError, setIsDiscardError] = useState<boolean>(false);
 
     const haveChangesBeenMade = useMemo(() => {
-        return isEqual(oldSettings, settings);
+        return !isEqual(oldSettings, settings);
     }, [oldSettings, settings]);
+
+    const loading = isDiscardLoading || isSubmitLoading || isFetchLoading || isBeingResetedLoading;
 
     useEffect(() => {
         if (!isLoading) {
@@ -73,7 +83,7 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
             if (!error) {
                 setSettings(data ? data.settings : undefined);
                 setOldSettings(data ? data.settings : undefined);
-                setIsFetchError(true);
+                setIsFetchError(false);
             } else {
                 setSettings(undefined);
                 setOldSettings(undefined);
@@ -92,12 +102,16 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
     async function updateSettingValue(settingId: string, value: unknown) {
         const newSettings = JSON.parse(JSON.stringify(settings)) as typeof settings;
         const settingIndex = newSettings.findIndex((setting) => setting.id === settingId);
+        if (settingIndex === -1) {
+            console.error("[medusa-plugin-settings](extended-settings-page-context.updateSettingValue()):", `received invalid settingId (${settingId}).`, settings);
+            return;
+        }
         newSettings[settingIndex].value = value;
         setSettings(newSettings);
     }
 
     async function save() {
-        if (isFetchLoading || isDiscardLoading || isSubmitLoading)
+        if (loading)
             return;
 
         setIsSubmitLoading(true);
@@ -139,7 +153,7 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
     }
 
     async function discard() {
-        if (isFetchLoading || isDiscardLoading || isSubmitLoading)
+        if (loading)
             return;
 
         setIsDiscardLoading(true);
@@ -159,10 +173,10 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
     }
 
     async function resetSettingsToDefaultValues() {
-        if (isFetchLoading || isDiscardLoading || isSubmitLoading)
+        if (loading)
             return;
 
-        setIsSubmitLoading(true);
+        setIsBeingResetedLoading(true);
         try {
             const response = await resetSettings();
             setOldSettings(response.resetedSettings);
@@ -182,7 +196,7 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
                 await mutateSetting(updatedSetting.id, async (oldData) => ({ setting: updatedSetting }), { revalidate: false, populateCache: true })
             }));
         } catch (error) {
-            setIsSubmitError(true);
+            setIsBeingResetedError(true);
             toast({
                 variant: "error",
                 title: "Failed to reset Settings.",
@@ -190,7 +204,7 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
             });
             console.error("[medusa-plugin-settings](extended-settings-page-context.resetSettingsToDefaultValues()):", error);
         } finally {
-            setIsSubmitLoading(false);
+            setIsBeingResetedLoading(false);
         }
     }
 
@@ -217,6 +231,11 @@ export const ExtendedSettingPageContextProvider = ({ children }: ExtendedSetting
 
                 isSubmitError,
                 isSubmitLoading,
+
+                isBeingResetedError,
+                isBeingResetedLoading,
+
+                loading
             }}
         >
             {children}

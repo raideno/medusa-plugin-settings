@@ -1,6 +1,6 @@
 {
     "name": "medusa-plugin-settings",
-    "version": "0.3.3",
+    "version": "0.0.1",
     "description": "Medusa Plugin Settings is a plugin made for medusa that will make it easier to add new settings with ui to your admin dashboard.",
     "author": "Raiden",
     "main": "dist/index.js",

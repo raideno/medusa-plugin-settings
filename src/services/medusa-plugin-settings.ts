@@ -84,7 +84,6 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
 
         switch (settingSchema.type) {
             case SettingSchemaTypes.BOOLEAN:
-                console.log("validating-boolean");
                 return typeof value === "boolean";
                 break;
             case SettingSchemaTypes.INTEGER:
@@ -106,11 +105,10 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
             case SettingSchemaTypes.STRING:
                 return typeof value === "string";
                 break;
-            case SettingSchemaTypes.STRING_ARRAY:
-                return Array.isArray(value) && value.every((v) => typeof v === "string")
-                break;
+            // case SettingSchemaTypes.STRING_ARRAY:
+            //     return Array.isArray(value) && value.every((v) => typeof v === "string")
+            //     break;
             default:
-                console.log("default-:");
                 return false;
                 break;
         }

@@ -13,7 +13,7 @@ type ListContainerProps = {
 
 const ListContainer = ({ children: items }: ListContainerProps) => {
     return (
-        <div className="flex flex-col ga-2">
+        <div className="mb-xlarge p-4 w-full flex flex-col gap-2 bg-white rounded border border-border">
             {items}
         </div>
     )
