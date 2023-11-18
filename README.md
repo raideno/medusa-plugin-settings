@@ -76,6 +76,12 @@ The plugin will make sure at each startup that every setting is initialized with
 
 [Video]().
 
+### Endpoints
+
+- **`GET`** `<BACKEND_URL>/store/extended-settings`
+
+- **`GET`** `<BACKEND_URL>/store/extended-settings/:settingId`
+
 ## Documentation
 
 See [Documentation](https://medusa-plugin-settings.raideno.xyz).

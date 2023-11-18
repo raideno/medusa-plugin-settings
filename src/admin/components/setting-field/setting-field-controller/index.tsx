@@ -46,22 +46,22 @@ const SettingFieldController = ({
             break;
         case SettingSchemaTypes.PASSWORD:
             return (
-                <SettingFieldPasswordController defaultValue={JSON.parse(setting.value as any) as string} onValueChange={handleValueChange} />
+                <SettingFieldPasswordController defaultValue={(setting.value as any) as string} onValueChange={handleValueChange} />
             );
             break;
         case SettingSchemaTypes.SELECT:
             return (
-                <SettingFieldSelectController defaultValue={JSON.parse(setting.value as any) as string} onValueChange={handleValueChange} options={setting.options} />
+                <SettingFieldSelectController defaultValue={(setting.value as any) as string} onValueChange={handleValueChange} options={setting.options} />
             );
             break;
         case SettingSchemaTypes.STRING:
             return (
-                <SettingFieldStringController defaultValue={JSON.parse(setting.value as any) as string} onValueChange={handleValueChange} />
+                <SettingFieldStringController defaultValue={(setting.value as any) as string} onValueChange={handleValueChange} />
             );
             break;
         case SettingSchemaTypes.TEXT:
             return (
-                <SettingFieldTextController defaultValue={JSON.parse(setting.value as any) as string} onValueChange={handleValueChange} />
+                <SettingFieldTextController defaultValue={(setting.value as any) as string} onValueChange={handleValueChange} />
             );
             break;
         default:

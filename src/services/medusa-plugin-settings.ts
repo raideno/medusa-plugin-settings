@@ -71,26 +71,26 @@ export default class MedusaPluginSettingsService extends TransactionBaseService 
 
     validateSettingValue(settingId: SettingSchema["id"], unParsedValue: unknown): boolean {
         const settingSchema = this.retrieveSettingSchema(settingId);
-        let parsedValue: unknown
+        // let parsedValue: unknown
 
-        try {
-            parsedValue = JSON.parse(unParsedValue as any);
-        } catch (error) {
-            console.log("[medusa-plugin-settings](service-validateSettingValue):", "failed parsing.");
-            return false;
-        }
+        // try {
+        //     parsedValue = JSON.parse(unParsedValue as any as any);
+        // } catch (error) {
+        //     console.log("[medusa-plugin-settings](service-validateSettingValue):", "failed parsing.");
+        //     return false;
+        // }
 
-        const value = parsedValue;
+        const value = unParsedValue;
 
         switch (settingSchema.type) {
             case SettingSchemaTypes.BOOLEAN:
-                return typeof value === "boolean";
+                return typeof JSON.parse(value as any) === "boolean";
                 break;
             case SettingSchemaTypes.INTEGER:
-                return !Number.isNaN(value) && Number.isFinite(value) && Number.isInteger(value);
+                return !Number.isNaN(JSON.parse(value as any)) && Number.isFinite(JSON.parse(value as any)) && Number.isInteger(JSON.parse(value as any));
                 break;
             case SettingSchemaTypes.NUMBER:
-                return !Number.isNaN(value) && Number.isFinite(value) && typeof value === "number";
+                return !Number.isNaN(JSON.parse(value as any)) && Number.isFinite(JSON.parse(value as any)) && typeof value === "number";
                 break;
             case SettingSchemaTypes.SELECT:
                 let options: SettingSchemaOption[];
